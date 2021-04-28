@@ -12,9 +12,9 @@ app.get("/", (req, res, next) => {
   var config = {
     method: "get",
     url:
-      `https://bodia.in/Bodia/Driver/driver_report?driver=32&from_date=${fromDate}&to_date=${toDate}&report_type=export`,
+      `https://bodia.in/Bodia/Driver/driver_report?driver=106&from_date=${fromDate}&to_date=${toDate}&report_type=export`,
     headers: {
-      Cookie: "ci_session=jb95dd25hdk4e3po269daihfnao1i5pq",
+      Cookie: "ci_session=tkphlsfe9qppgsip2oi6vvursvjidbpl",
     },
   };
 
@@ -57,7 +57,7 @@ app.get("/", (req, res, next) => {
           "Distance Km": 1.78,
         },
       ];
-      var analysisData = reportSummaryCOD(json);
+      var analysisData = reportSummaryCOD(demoJSON);
 var demo = [];
 
 
@@ -78,26 +78,44 @@ function reportSummaryCOD(fullJson) {
   var totalIncentiveOnReport = 0;
   var totalOrderOnReport = 0;
   var totalOrder = 0;
+  var dailyCOD =0;
   tempDateArray = [];
   tempDateArray.push(baseDate);
   // `  console.log(tempDateArray)`
-  for (var i = 0; i < fullJson.length-1; i++) {
+  for (var i = 0; i < fullJson.length; i++) {
+    //The -1 will not print last and miss 04-03-2021
+    console.log(fullJson[i]["Order Date"])
     if (fullJson[i]["Payment Mode"] === "CASH ON DELIVERY") {
       totalCOD += fullJson[i]["Order Amount"];
+      
     }
     if(baseDate===fullJson[i]["Order Date"]){
+      if(fullJson[i]["Payment Mode"]==="CASH ON DELIVERY")
+      {
+        dailyCOD+=fullJson[i]["Order Amount"];
+      }
       dateList[baseDate]={
       "Total Orders":totalOrder+=1,
+      "Total COD":dailyCOD,
       "Total Incentive":calculateIncentive(totalOrder)
+
     }
+
   }
     else{
+      console.log(fullJson[i]["Order Date"])
       totalIncentiveOnReport+=dateList[baseDate]['Total Incentive']
-      
       totalOrder=0
+      dailyCOD=0
       baseDate=fullJson[i]["Order Date"]
+      if(fullJson[i]["Payment Mode"]==="CASH ON DELIVERY")
+      {
+        dailyCOD+=fullJson[i]["Order Amount"];
+      }
+
       dateList[baseDate]={
         "Total Orders":totalOrder+=1,
+        "Total COD":dailyCOD,
         "Total Incentive":calculateIncentive(totalOrder)
     }
 
@@ -109,18 +127,11 @@ function reportSummaryCOD(fullJson) {
   dateList['totalIncentive']=totalIncentiveOnReport;
   dateList['grandTotalSalary']=(fullJson.length*25)+totalIncentiveOnReport
   dateList['totalCOD']=totalCOD;
- 
-  
+
+  console.log(dateList)
   return dateList;
   
   }
-  
- 
-
-
-
-
-
 function calculateIncentive(totalOrder) {
   var incentiveAmount = 0;
   if (totalOrder >= 10 && totalOrder < 15) {

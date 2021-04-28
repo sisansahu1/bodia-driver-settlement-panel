@@ -31,7 +31,7 @@
 
   <body>
 
-    <form action="http://localhost:3000/">
+    <form action="http://localhost:3000/" target="_self">
       <label for="fromDate">From: </label>
       <input type="date" id="fromDate" name="fromDate">
       <label for="toDate">To:</label>
@@ -40,11 +40,11 @@
       <input type="number" id="toDate" name="previousDue"value=0>
       <input type="submit">
 
-    </form>
-    <input type="button" onclick="Report()" value="Create Table From JSON" />
+    
+    <input type="button" onclick="Report()" type="submit" value="Create Table From JSON" />
     <h2>Driver Settlement</h2>
     <p id="data"></p>
-    <p id="showData"></p>
+    <p id="showData"></p></form>
 
     <script>
       // var ab = myJSON.replace(/\\/g, "");
